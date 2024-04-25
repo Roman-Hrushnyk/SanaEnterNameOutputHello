@@ -15,18 +15,34 @@ namespace SanaEnterNameOutputHello.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View(new UserNameModel());
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult Index(UserNameModel model)
         {
-            return View();
+            if (!string.IsNullOrEmpty(model.Name))
+            {
+                return RedirectToAction("Privacy", model);
+            }
+            else
+            {
+                ModelState.AddModelError("Name", "Please enter your name.");
+                return View(model);
+            }
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Privacy(UserNameModel model)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (!string.IsNullOrEmpty(model.Name))
+            {
+                return View(model);
+            }
+            else
+            {
+                // Handle the case where Name is not found
+                return RedirectToAction("Index");
+            }
         }
     }
 }
